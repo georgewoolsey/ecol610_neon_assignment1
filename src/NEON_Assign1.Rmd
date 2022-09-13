@@ -1,0 +1,104 @@
+---
+title: "NEON_Assign1_script"
+output:
+  pdf_document: default
+  html_document: default
+date: "2022-08-31"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is the R script for ECOL610 NEON assignment 1
+This script will provide code to carry out assignment 1 for the Central Plains Experiemntal Range - you will need to modify this code to carry it out for your site.
+
+First, load in the needed packages. Install the packages if needed.
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+
+Load in the data. You will need to change the file path for your directory.
+
+```{r}
+#clear global environment
+rm(list=ls())
+
+#load in the data
+CPER_30 <- read.csv("C:/Users/katie/OneDrive - Colostate/Documents/CSU/PhD/Fall 2022/Ecosystem Ecology Grad/NEON project/Final half-hourly files/Central Plains Experimental Range - 30 min.csv")
+CPER_daily <- read.csv("C:/Users/katie/OneDrive - Colostate/Documents/CSU/PhD/Fall 2022/Ecosystem Ecology Grad/NEON project/Final daily files/Central Plains Experimental Range - daily.csv")
+```
+
+Question 1: Calculate GPP and compare to NEON GPP for summer and winter week
+```{r}
+#calculate GPP from NEE and Re using equation NEE = Re - GPP (negative values land C storage)
+CPER_30$GPP_calc <- CPER_30$RE - CPER_30$NEE 
+
+#clipping the data to a winter and summer week
+ #choose your own weeks (without data gaps) for your site!
+#February 16-22, 2020
+CPER_winter_week <- filter(CPER_30, Year == "2020" & DOY == 47:53)
+#June 21-27, 2020
+CPER_summer_week <- filter(CPER_30, Year == "2020" & DOY == 173:180)
+
+#creating long format for plotting
+CWW_stacked <-gather(CPER_winter_week, "GPP_type", "GPP_value", c(9,15))
+CSW_stacked <-gather(CPER_summer_week, "GPP_type", "GPP_value", c(9,15))
+
+#winter
+#plot of NEON vs calculated GPP
+ggplot(CWW_stacked,aes(x=DOY.total,y=GPP_value, color = GPP_type)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(expression(paste("GPP (mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Winter GPP Comparison")
+
+#summer
+#plot of NEON vs calculated GPP
+ggplot(CSW_stacked,aes(x=DOY.total,y=GPP_value, color = GPP_type)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(expression(paste("GPP (mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Summer GPP Comparison")
+
+```
+Question 2: annual patterns in C exchange and environmental properties
+```{r}
+#reduce data to just 2020
+CPER_2020 <- filter(CPER_daily, Year == "2020")
+#plot of NEE
+ggplot(CPER_2020,aes(x=DOY,y=NEE)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(expression(paste("NEE (mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual NEE")
+#plot of GPP
+ggplot(CPER_2020,aes(x=DOY,y=GPP)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(expression(paste("GPP (mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual GPP")
+#plot of Re
+ggplot(CPER_2020,aes(x=DOY,y=RE)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(expression(paste("Re (mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Re")
+#plot of soil temp
+ggplot(CPER_2020,aes(x=DOY,y=TS)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab("Soil temperature (\u00B0C)") +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Soil Temperature")
+#plot of air temp
+ggplot(CPER_2020,aes(x=DOY,y=TA)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab("Air temperature (\u00B0C)") +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Air Temperature")
+#plot of soil moisture
+ggplot(CPER_2020,aes(x=DOY,y=SWC)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab("Soil Water Content (%)") +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Soil Water Content")
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

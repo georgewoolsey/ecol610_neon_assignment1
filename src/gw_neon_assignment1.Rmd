@@ -1,0 +1,188 @@
+---
+title: "ECOL 610: NEON Assignment 1"
+author: "Group - Santa Rita Experimental Range (SRER)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+header-includes:
+  - \usepackage{caption}
+editor_options: 
+  chunk_output_type: console
+knit: (function(inputFile, encoding){ 
+    out_dir <- '../';
+    rmarkdown::render(inputFile, encoding = encoding, output_file=file.path(dirname(inputFile), out_dir, 'ECOL610_NEONAssignment1_SRER.pdf')) 
+  })
+---
+  - Emily Swartz
+  - Shahriar Shah Heydari
+  - Stephanie Cardinalli
+  - George Woolsey
+
+# In Class
+
+## Setup
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.height = 5, fig.width = 7)
+```
+
+This is the R script for ECOL610 NEON assignment 1
+This script will provide code to carry out assignment 1 for the Central Plains Experiemntal Range - you will need to modify this code to carry it out for your site.
+
+First, load in the needed packages. Install the packages if needed.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(viridis)
+library(scales)
+library(latex2exp)
+```
+
+
+Load in the data. You will need to change the file path for your directory.
+
+```{r}
+#load in the data
+CPER_30 <- read.csv("../data/Central Plains Experimental Range - 30 min.csv")
+CPER_daily <- read.csv("../data/Central Plains Experimental Range - daily.csv")
+```
+
+## Question 1
+
+Calculate GPP and compare to NEON GPP for summer and winter week
+
+*NEE is defined, by convention, as CO2 flux from the ecosystem to the atmosphere. It corresponds to a negative carbon input to ecosystems. NEE is defined in this way because atmospheric scientists, who originated the term, seek to document net sources of CO2 to the atmosphere (i.e., NEE) that account for rising atmospheric CO2 concentration. Therefore, CO2 input to the ecosystem is a negative NEE.*
+
+[Chapin, F. S., Matson, P. A., Mooney, H. A., & Vitousek, P. M. (2002). Principles of terrestrial ecosystem ecology.](https://d1wqtxts1xzle7.cloudfront.net/55690956/Principles_of_terrestrial_ecosystem_ecology-with-cover-page-v2.pdf?Expires=1663106506&Signature=ZLKRpouXVl6Q2oVAvMbYfcyWZT227z~A0BOTNMvx3nr-hzPv-aQr2DF-vvK~O2T8ygmVtbYXdNlXfNAE8FYZ70B2OOHPU8HHIhXPwKW90Mf~SYyj2xIQBIb0gMK4mZ6lJLG~eO7cPoLuK974yvVy5zdcnJt81MhsSB2vPb3w8l-QijHyNlYmpr43FYR50UuYNAib58kuaUNYxN-jMFaLVLS6fvYxV93ToeH3mILBD3mMliAUAViXzXngzVVuLQXXyJodsR1JbR54PJ-Uhyeitj7PI9Qq1Rtpz1Y0gRIkXd5DiJenTOXLTpc1jD~OYBqyGowRjcSPMSgyMT1cilxGQQ__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA) p.208
+
+$$
+\begin{aligned}
+NEE = R_{E} - GPP
+\end{aligned}
+$$
+$$
+\begin{aligned}
+GPP = R_{E} - NEE
+\end{aligned}
+$$
+
+```{r}
+#calculate GPP from NEE and Re using equation NEE = Re - GPP (negative values land C storage)
+CPER_30 <- CPER_30 %>% 
+  dplyr::mutate(
+    GPP_calc = as.numeric(RE - NEE)
+    , GPP_is_equal = round(GPP_calc, 3) == round(GPP, 3)
+  )
+
+# are there rows where the data is not equal?
+  nrow(
+    CPER_30 %>% 
+      dplyr::filter(
+        GPP_is_equal == FALSE
+        & !is.na(GPP)
+      )
+  )
+
+
+#clipping the data to a winter and summer week
+ #choose your own weeks (without data gaps) for your site!
+#February 16-22, 2020
+CPER_winter_week <- filter(CPER_30, Year == "2020" & DOY == 47:53)
+#June 21-27, 2020
+CPER_summer_week <- filter(CPER_30, Year == "2020" & DOY == 173:180)
+
+#creating long format for plotting
+CWW_stacked <-gather(CPER_winter_week, "GPP_type", "GPP_value", c(9,15))
+CSW_stacked <-gather(CPER_summer_week, "GPP_type", "GPP_value", c(9,15))
+
+#winter
+#plot of NEON vs calculated GPP
+ggplot(CWW_stacked,aes(x=DOY.total,y=GPP_value, color = GPP_type)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(expression(paste("GPP (mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Winter GPP Comparison")
+
+#summer
+#plot of NEON vs calculated GPP
+ggplot(CSW_stacked,aes(x=DOY.total,y=GPP_value, color = GPP_type)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(latex2exp::TeX("$GPP \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Summer GPP Comparison")
+
+```
+
+## Question 2 
+
+annual patterns in C exchange and environmental properties
+
+```{r}
+#reduce data to just 2020
+CPER_2020 <- filter(CPER_daily, Year == "2020")
+#plot of NEE
+ggplot(CPER_2020,aes(x=DOY,y=NEE)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(latex2exp::TeX("$NEE \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual NEE")
+#plot of GPP
+ggplot(CPER_2020,aes(x=DOY,y=GPP)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(latex2exp::TeX("$GPP \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual GPP")
+#plot of Re
+ggplot(CPER_2020,aes(x=DOY,y=RE)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab(latex2exp::TeX("$R_{E} \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle(latex2exp::TeX("$Annual \\; R_{E}$"))
+#plot of soil temp
+ggplot(CPER_2020,aes(x=DOY,y=TS)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab("Soil temperature (\u00B0C)") +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Soil Temperature")
+#plot of air temp
+ggplot(CPER_2020,aes(x=DOY,y=TA)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab("Air temperature (\u00B0C)") +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Air Temperature")
+#plot of soil moisture
+ggplot(CPER_2020,aes(x=DOY,y=SWC)) + geom_point() + 
+    xlab("Day of Year") + 
+    ylab("Soil Water Content (%)") +
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Soil Water Content")
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+# Assignment
+
+The draft questions for that assignment are:
+
+## Question 1 
+
+Using the 30 minute data. Calculate GPP for your site. Choose a winter and summer week in your dataset. Create a plot with both your calculated GPP and the NEON GPP. 
+
+### a. 
+
+How do the calculated and NEON GPP's compare for your site? Why are they the same or different? (Note: NEON uses eddy covariance to calculate these metrics - more about that here (Links to an external site.).)
+
+### b. 
+
+How do your sites GPP values vary between summer and winter? What do you think is driving these differences?
+
+### c. 
+
+CPER is a semi-arid grassland. Compare GPP values between your site and CPER - why might they be different or similar?
+
+## Question 2 
+
+Using the daily data. Select a single year of data for your site. Plot NEE, GPP, Re, soil temperature, air temperature, and soil water content against Day of Year.
+
+### a. 
+
+Describe the annual patterns in each plot and what you think drives them.
+
+### b. 
+
+Compare annual values of NEE at your site vs. CPER. Which exchanges more carbon? Why do you think that is?
+
