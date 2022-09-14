@@ -495,7 +495,6 @@ Using the daily data. Select a single year of data for your site. Plot NEE, GPP,
 
 ```{r}
 p_fn <- function(my_var, my_year) {
-  my_title <- paste0(toupper(my_var), " - ", as.character(my_year))
   #plot
   (
     dta_1day %>% 
@@ -505,10 +504,10 @@ p_fn <- function(my_var, my_year) {
     ggplot(., aes_string(x = "date_id", y = my_var, color = "neon_site_name")) +
       geom_point() +
       xlab("Date") + 
-      ylab(toupper(my_var)) +
+      ylab(t[i]) +
       labs(
-        title = my_title
-        # , subtitle = site
+        title = t[i]
+        , subtitle = my_year
       ) +
       scale_fill_brewer(type = "qual", palette = "Dark2", direction = -1) +
       theme_bw() +
@@ -523,6 +522,14 @@ p_fn <- function(my_var, my_year) {
 }
 # vars
 v <- c("nee", "gpp", "re", "ts", "ta", "swc")
+t <- c(
+  latex2exp::TeX("NEE $( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")
+   , latex2exp::TeX("GEE $( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")
+   , latex2exp::TeX("$R_E$")
+   , "Soil Temperature (\u00B0C)"
+   , "Air temperature (\u00B0C)"
+    , "Soil Water Content"
+)
 for (i in 1:length(v)) {
   print( p_fn(my_var = v[i], my_year = 2020) )
 }
