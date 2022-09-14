@@ -22,11 +22,17 @@ knit: (function(inputFile, encoding){
 ## Setup
   
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.height = 5, fig.width = 7)
+knitr::opts_chunk$set(
+  echo = TRUE
+  , warning = FALSE
+  , message = FALSE
+  , fig.height = 5
+  , fig.width = 7
+)
 ```
 
 This is the R script for ECOL610 NEON assignment 1
-This script will provide code to carry out assignment 1 for the Central Plains Experiemntal Range - you will need to modify this code to carry it out for your site.
+This script will provide code to carry out assignment 1 for the Central Plains Experimental Range - you will need to modify this code to carry it out for your site.
 
 First, load in the needed packages. Install the packages if needed.
 
@@ -51,7 +57,7 @@ CPER_daily <- read.csv("../data/Central Plains Experimental Range - daily.csv")
 
 Calculate GPP and compare to NEON GPP for summer and winter week
 
-*NEE is defined, by convention, as CO2 flux from the ecosystem to the atmosphere. It corresponds to a negative carbon input to ecosystems. NEE is defined in this way because atmospheric scientists, who originated the term, seek to document net sources of CO2 to the atmosphere (i.e., NEE) that account for rising atmospheric CO2 concentration. Therefore, CO2 input to the ecosystem is a negative NEE.*
+*NEE is defined, by convention, as $CO_{2}$ flux from the ecosystem to the atmosphere. It corresponds to a negative carbon input to ecosystems. NEE is defined in this way because atmospheric scientists, who originated the term, seek to document net sources of $CO_{2}$ to the atmosphere (i.e., NEE) that account for rising atmospheric $CO_{2}$ concentration. Therefore, $CO_{2}$ input to the ecosystem is a negative NEE.*
 
 [Chapin, F. S., Matson, P. A., Mooney, H. A., & Vitousek, P. M. (2002). Principles of terrestrial ecosystem ecology.](https://d1wqtxts1xzle7.cloudfront.net/55690956/Principles_of_terrestrial_ecosystem_ecology-with-cover-page-v2.pdf?Expires=1663106506&Signature=ZLKRpouXVl6Q2oVAvMbYfcyWZT227z~A0BOTNMvx3nr-hzPv-aQr2DF-vvK~O2T8ygmVtbYXdNlXfNAE8FYZ70B2OOHPU8HHIhXPwKW90Mf~SYyj2xIQBIb0gMK4mZ6lJLG~eO7cPoLuK974yvVy5zdcnJt81MhsSB2vPb3w8l-QijHyNlYmpr43FYR50UuYNAib58kuaUNYxN-jMFaLVLS6fvYxV93ToeH3mILBD3mMliAUAViXzXngzVVuLQXXyJodsR1JbR54PJ-Uhyeitj7PI9Qq1Rtpz1Y0gRIkXd5DiJenTOXLTpc1jD~OYBqyGowRjcSPMSgyMT1cilxGQQ__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA) p.208
 
@@ -120,34 +126,46 @@ annual patterns in C exchange and environmental properties
 CPER_2020 <- filter(CPER_daily, Year == "2020")
 #plot of NEE
 ggplot(CPER_2020,aes(x=DOY,y=NEE)) + geom_point() + 
-    xlab("Day of Year") + 
+    xlab("Day of Year (2020)") + 
     ylab(latex2exp::TeX("$NEE \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
-    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual NEE")
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(title = "Annual NEE",
+         subtitle = "CPER")
 #plot of GPP
 ggplot(CPER_2020,aes(x=DOY,y=GPP)) + geom_point() + 
-    xlab("Day of Year") + 
+    xlab("Day of Year (2020)") + 
     ylab(latex2exp::TeX("$GPP \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
-    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual GPP")
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(title = "Annual GPP",
+         subtitle = "CPER")
 #plot of Re
 ggplot(CPER_2020,aes(x=DOY,y=RE)) + geom_point() + 
-    xlab("Day of Year") + 
+    xlab("Day of Year (2020)") + 
     ylab(latex2exp::TeX("$R_{E} \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
-    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle(latex2exp::TeX("$Annual \\; R_{E}$"))
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(title = latex2exp::TeX("$Annual \\; R_{E}$"),
+         subtitle = "CPER")
 #plot of soil temp
 ggplot(CPER_2020,aes(x=DOY,y=TS)) + geom_point() + 
-    xlab("Day of Year") + 
+    xlab("Day of Year (2020)") + 
     ylab("Soil temperature (\u00B0C)") +
-    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Soil Temperature")
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(title = "Annual Soil Temperature",
+         subtitle = "CPER")
 #plot of air temp
 ggplot(CPER_2020,aes(x=DOY,y=TA)) + geom_point() + 
-    xlab("Day of Year") + 
+    xlab("Day of Year (2020)") + 
     ylab("Air temperature (\u00B0C)") +
-    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Air Temperature")
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(title = "Annual Air Temperature",
+         subtitle = "CPER")
 #plot of soil moisture
 ggplot(CPER_2020,aes(x=DOY,y=SWC)) + geom_point() + 
-    xlab("Day of Year") + 
+    xlab("Day of Year (2020)") + 
     ylab("Soil Water Content (%)") +
-    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Annual Soil Water Content")
+    theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(title = "Annual Soil Water Content",
+         subtitle = "CPER")
 
 ```
 
@@ -156,15 +174,191 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 # Assignment
 
+## Load data
+```{r}
+remove(list=ls())
+# what is your site name?
+site <- "Santa Rita Experimental Range"
+# load 30 min data
+f_list <- list.files(path = "../data/", pattern="*30 min.csv")
+for (i in 1:length(f_list)){
+  nm <- stringr::word(f_list[i], start = 1, sep = "30 min") %>% 
+    stringr::str_replace_all(pattern = "[[:punct:]]", replacement = "") %>% 
+    stringr::str_trim() %>% 
+    stringr::str_squish()
+  temp <- read.csv(paste0("../data/", f_list[i])) %>% 
+    dplyr::mutate(neon_site_name = nm) %>% 
+    dplyr::relocate(neon_site_name) %>% 
+    dplyr::rename_with(~ tolower(
+      gsub(" ", "_", 
+         str_trim(gsub("\\s+", " ", .x))
+      )
+    ))
+  if(i==1){
+    dta_30min <- temp
+  }else{
+    dta_30min <- dplyr::union_all(dta_30min, temp)
+  }
+  remove(temp)
+}
+# load daily data
+f_list <- list.files(path = "../data/", pattern="*daily.csv")
+for (i in 1:length(f_list)){
+  nm <- stringr::word(f_list[i], start = 1, sep = "daily") %>% 
+    stringr::str_replace_all(pattern = "[[:punct:]]", replacement = "") %>% 
+    stringr::str_trim() %>% 
+    stringr::str_squish()
+  temp <- read.csv(paste0("../data/", f_list[i])) %>% 
+    dplyr::mutate(neon_site_name = nm) %>% 
+    dplyr::relocate(neon_site_name) %>% 
+    dplyr::rename_with(~ tolower(
+      gsub(" ", "_", 
+         str_trim(gsub("\\s+", " ", .x))
+      )
+    ))
+  if(i==1){
+    dta_1day <- temp
+  }else{
+    dta_1day <- dplyr::union_all(dta_1day, temp)
+  }
+  remove(temp)
+}
+# create dates and record counts
+# day
+dta_1day <- dta_1day %>% 
+  dplyr::mutate(
+    date_id = lubridate::make_date(year = year, month = month, day = day)
+    , week = lubridate::week(date_id)
+    , has_gpp = ifelse(!is.na(gpp), 1, 0)
+    , season =
+        dplyr::case_when(
+          month %in% c(1:3, 12) ~ "Winter"
+          , month %in% c(6:8) ~ "Summer"
+          , TRUE  ~ "other")
+  ) %>% 
+  dplyr::group_by(neon_site_name, week, year) %>% 
+  dplyr::mutate(is_full_week = sum(has_gpp)==7) %>% 
+  dplyr::ungroup()
+# 30
+dta_30min <- dta_30min %>% 
+  dplyr::mutate(
+    date_id = lubridate::make_date(year = year, month = month, day = day)
+    , time_id = lubridate::make_datetime(year = year, month = month, day = day
+                        , hour = floor(hour)
+                        , min = (hour-floor(hour))*60
+                )
+    , week = lubridate::week(date_id)
+    , has_gpp = ifelse(!is.na(gpp), 1, 0)
+    , season =
+        dplyr::case_when(
+          month %in% c(1:3, 12) ~ "Winter"
+          , month %in% c(6:8) ~ "Summer"
+          , TRUE  ~ "other")
+  ) %>% 
+  dplyr::group_by(neon_site_name, week, year) %>% 
+  dplyr::mutate(is_full_week = sum(has_gpp)==24*2*7) %>% 
+  dplyr::ungroup()
+```
+
 The draft questions for that assignment are:
 
 ## Question 1 
 
-Using the 30 minute data. Calculate GPP for your site. Choose a winter and summer week in your dataset. Create a plot with both your calculated GPP and the NEON GPP. 
+Using the 30 minute data. Calculate GPP for your site. 
+
+```{r}
+dta_30min <- dta_30min %>% 
+  dplyr::mutate(
+    gpp_calc = as.numeric(re - nee)
+    , gpp_is_equal = round(gpp_calc, 3) == round(gpp, 3)
+  )
+# quick plot of gpp equality
+dta_30min %>% 
+  dplyr::filter(
+    neon_site_name == site
+    & !is.na(gpp)
+  ) %>% 
+ggplot(., aes(x = gpp_is_equal)) +
+  geom_bar(
+    aes(fill = gpp_is_equal)
+    , width = 0.7
+  ) +
+  geom_text(
+    aes(label = scales::comma(..count..))
+    , stat = "count"
+    , vjust = -0.5
+    , color = "black"
+  ) +
+  scale_fill_viridis_d(alpha = 0.8) +
+  scale_y_continuous(labels = scales::comma) +
+  xlab("GPP Calc. = GPP? (accuracy = .001)") +
+  labs(
+    title = "GPP Calc. = GPP? (accuracy = .001)"
+    , subtitle = paste0(site, " (30-min data)")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "none"
+  )
+
+```
+
+Choose a winter and summer week in your dataset. Create a plot with both your calculated GPP and the NEON GPP. 
+
+```{r}
+# select week with full data for winter and summer
+sum_wk <- dta_30min %>% 
+  dplyr::filter(
+    neon_site_name == site
+    & season == "Summer"
+    & year == 2020
+    & is_full_week == TRUE
+  ) %>% 
+  dplyr::slice_sample(n = 1)
+wint_wk <- dta_30min %>% 
+  dplyr::filter(
+    neon_site_name == site
+    & season == "Winter"
+    & year == 2020
+    & is_full_week == TRUE
+  ) %>% 
+  dplyr::slice_sample(n = 1)
+
+# plot week
+dta_30min %>% 
+  dplyr::filter(
+    neon_site_name == site
+    & !is.na(gpp)
+  ) %>% 
+ggplot(., aes(x = gpp_is_equal)) +
+  geom_bar(
+    aes(fill = gpp_is_equal)
+    , width = 0.7
+  ) +
+  geom_text(
+    aes(label = scales::comma(..count..))
+    , stat = "count"
+    , vjust = -0.5
+    , color = "black"
+  ) +
+  scale_fill_viridis_d(alpha = 0.8) +
+  scale_y_continuous(labels = scales::comma) +
+  xlab("GPP Calc. = GPP? (accuracy = .001)") +
+  labs(
+    title = "GPP Calc. = GPP? (accuracy = .001)"
+    , subtitle = paste0(site, " (30-min data)")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "none"
+  )
+
+```
+
 
 ### a. 
 
-How do the calculated and NEON GPP's compare for your site? Why are they the same or different? (Note: NEON uses eddy covariance to calculate these metrics - more about that here (Links to an external site.).)
+How do the calculated and NEON GPP's compare for your site? Why are they the same or different? (Note: NEON uses eddy covariance to calculate these metrics - more about that [here](https://youtu.be/CR4Anc8Mkas)).
 
 ### b. 
 
