@@ -493,7 +493,7 @@ ggplot(., aes(x = season, y = mean_gpp, fill = season)) +
 
 Using the daily data. Select a single year of data for your site. Plot NEE, GPP, Re, soil temperature, air temperature, and soil water content against Day of Year.
 
-```{r}
+```{r, fig.height = 4, fig.width = 7}
 p_fn <- function(my_var, my_year) {
   #plot
   (
