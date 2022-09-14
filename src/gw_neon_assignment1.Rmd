@@ -105,14 +105,14 @@ CSW_stacked <-gather(CPER_summer_week, "GPP_type", "GPP_value", c(9,15))
 #plot of NEON vs calculated GPP
 ggplot(CWW_stacked,aes(x=DOY.total,y=GPP_value, color = GPP_type)) + geom_point() + 
     xlab("Day of Year") + 
-    ylab(expression(paste("GPP (mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
+    ylab(expression(paste("GPP ( mol CO"[2]*" m"^{-2}, "day"^{-2}*")"))) +
     theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Winter GPP Comparison")
 
 #summer
 #plot of NEON vs calculated GPP
 ggplot(CSW_stacked,aes(x=DOY.total,y=GPP_value, color = GPP_type)) + geom_point() + 
     xlab("Day of Year") + 
-    ylab(latex2exp::TeX("$GPP \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    ylab(latex2exp::TeX("$GPP \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
     theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + ggtitle("Summer GPP Comparison")
 
 ```
@@ -127,21 +127,21 @@ CPER_2020 <- filter(CPER_daily, Year == "2020")
 #plot of NEE
 ggplot(CPER_2020,aes(x=DOY,y=NEE)) + geom_point() + 
     xlab("Day of Year (2020)") + 
-    ylab(latex2exp::TeX("$NEE \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    ylab(latex2exp::TeX("$NEE \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
     theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
     labs(title = "Annual NEE",
          subtitle = "CPER")
 #plot of GPP
 ggplot(CPER_2020,aes(x=DOY,y=GPP)) + geom_point() + 
     xlab("Day of Year (2020)") + 
-    ylab(latex2exp::TeX("$GPP \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    ylab(latex2exp::TeX("$GPP \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
     theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
     labs(title = "Annual GPP",
          subtitle = "CPER")
 #plot of Re
 ggplot(CPER_2020,aes(x=DOY,y=RE)) + geom_point() + 
     xlab("Day of Year (2020)") + 
-    ylab(latex2exp::TeX("$R_{E} \\; (mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2}$")) +
+    ylab(latex2exp::TeX("$R_{E} \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
     theme_bw(base_size = 16) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
     labs(title = latex2exp::TeX("$Annual \\; R_{E}$"),
          subtitle = "CPER")
@@ -270,7 +270,7 @@ Using the 30 minute data. Calculate GPP for your site.
 dta_30min <- dta_30min %>% 
   dplyr::mutate(
     gpp_calc = as.numeric(re - nee)
-    , gpp_is_equal = round(gpp_calc, 3) == round(gpp, 3)
+    , gpp_is_equal = round(gpp_calc, 2) == round(gpp, 2)
   )
 # quick plot of gpp equality
 dta_30min %>% 
@@ -291,16 +291,15 @@ ggplot(., aes(x = gpp_is_equal)) +
   ) +
   scale_fill_viridis_d(alpha = 0.8) +
   scale_y_continuous(labels = scales::comma) +
-  xlab("GPP Calc. = GPP? (accuracy = .001)") +
+  xlab("GPP Calc. = GPP? (accuracy = .01)") +
   labs(
-    title = "GPP Calc. = GPP? (accuracy = .001)"
+    title = "GPP Calc. = GPP? (accuracy = .01)"
     , subtitle = paste0(site, " (30-min data)")
   ) +
   theme_bw() +
   theme(
     legend.position = "none"
   )
-
 ```
 
 Choose a winter and summer week in your dataset. Create a plot with both your calculated GPP and the NEON GPP. 
@@ -324,35 +323,67 @@ wint_wk <- dta_30min %>%
   ) %>% 
   dplyr::slice_sample(n = 1)
 
-# plot week
+# plot winter week
 dta_30min %>% 
   dplyr::filter(
     neon_site_name == site
-    & !is.na(gpp)
+    & year == 2020
+    & week == wint_wk$week[1]
   ) %>% 
-ggplot(., aes(x = gpp_is_equal)) +
-  geom_bar(
-    aes(fill = gpp_is_equal)
-    , width = 0.7
+ggplot(., aes(x = time_id)) +
+  geom_point(
+    aes(y = gpp, color = "GPP")
+    , size = 2.5
   ) +
-  geom_text(
-    aes(label = scales::comma(..count..))
-    , stat = "count"
-    , vjust = -0.5
-    , color = "black"
+  geom_point(
+    aes(y = gpp_calc, color = "GPP Calc.")
+    , size = 0.9
   ) +
-  scale_fill_viridis_d(alpha = 0.8) +
-  scale_y_continuous(labels = scales::comma) +
-  xlab("GPP Calc. = GPP? (accuracy = .001)") +
+  scale_color_brewer(type = "qual", palette = "Dark2") +
+  xlab("Day of Year") + 
+  ylab(latex2exp::TeX("$GPP \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
   labs(
-    title = "GPP Calc. = GPP? (accuracy = .001)"
+    title = "Winter Week Sample: Calculated GPP vs. NEON GPP"
     , subtitle = paste0(site, " (30-min data)")
   ) +
   theme_bw() +
   theme(
-    legend.position = "none"
-  )
+    legend.position = "bottom"
+    , legend.direction = "horizontal"
+    , legend.title = element_blank()
+  ) +
+  guides(color = guide_legend(override.aes = list(size=5, alpha = 0.9)))
 
+# plot summer week
+dta_30min %>% 
+  dplyr::filter(
+    neon_site_name == site
+    & year == 2020
+    & week == sum_wk$week[1]
+  ) %>% 
+ggplot(., aes(x = time_id)) +
+  geom_point(
+    aes(y = gpp, color = "GPP")
+    , size = 2.5
+  ) +
+  geom_point(
+    aes(y = gpp_calc, color = "GPP Calc.")
+    , size = 0.9
+  ) +
+  scale_color_brewer(type = "qual", palette = "Dark2") +
+  xlab("Day of Year") + 
+  ylab(latex2exp::TeX("$GPP \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
+  labs(
+    title = "Summer Week Sample: Calculated GPP vs. NEON GPP"
+    , subtitle = paste0(site, " (30-min data)")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom"
+    , legend.direction = "horizontal"
+    , legend.title = element_blank()
+  ) +
+  guides(color = guide_legend(override.aes = list(size=5, alpha = 0.9)))
 ```
 
 
@@ -360,17 +391,144 @@ ggplot(., aes(x = gpp_is_equal)) +
 
 How do the calculated and NEON GPP's compare for your site? Why are they the same or different? (Note: NEON uses eddy covariance to calculate these metrics - more about that [here](https://youtu.be/CR4Anc8Mkas)).
 
+\textcolor{blue}{The majority of data points have a calculated GPP ($GPP = R_{E} - NEE$) equal to the NEON GPP. There are `r scales::comma(dta_30min %>% dplyr::filter(neon_site_name == site & gpp_is_equal == TRUE) %>% nrow())` records for which the GPP is equal (accuracy = 0.01) and `r scales::comma(dta_30min %>% dplyr::filter(neon_site_name == site & gpp_is_equal == FALSE) %>% nrow())` records for which the GPP is not equal. In cases where the GPP is not equal, the difference is negligible and likely due to rounding due to number accuracy.}
+
+
 ### b. 
 
 How do your sites GPP values vary between summer and winter? What do you think is driving these differences?
+
+```{r}
+# plot points
+dta_30min %>% 
+  dplyr::filter(
+    # neon_site_name == site
+    year == 2020
+    & season %in% c("Summer", "Winter")
+  ) %>% 
+ggplot(., aes(x = time_id, y = gpp, color = season)) +
+  geom_point(
+    # size = 0.2
+    alpha = 0.4
+    , shape = "."
+  ) +
+  geom_smooth(
+    method = "lm"
+    , formula=y~1
+    , se = FALSE
+    , lwd = 1.1
+    , linetype = "solid"
+    , alpha = 1
+  ) +
+  facet_wrap(~neon_site_name) +
+  scale_color_viridis_d(option = "turbo", direction = -1) +
+  xlab("Day of Year") + 
+  ylab(latex2exp::TeX("$GPP \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
+  labs(
+    title = "2020 NEON GPP (30-min data)"
+    , subtitle = paste0(site)
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom"
+    , legend.direction = "horizontal"
+    , legend.title = element_blank()
+    , axis.text.x = element_text(angle = 60, hjust=1)
+  ) +
+  guides(color = guide_legend(override.aes = list(size=5, alpha = 0.9)))
+
+
+
+```
+
+
+\textcolor{blue}{Based on 2020 data, The average 30-minute GPP for the NEON site `r site` is higher in the winter months than in the summer months. This is opposite of the pattern for GPP seen at the CPER site. At the `r site`, this pattern is likely driven by low summer precipitation and high summer temperatures to the winter.}
 
 ### c. 
 
 CPER is a semi-arid grassland. Compare GPP values between your site and CPER - why might they be different or similar?
 
+```{r}
+# plot points
+dta_30min %>% 
+  dplyr::filter(
+    # neon_site_name == site
+    year == 2020
+    & season %in% c("Summer", "Winter")
+  ) %>% 
+  dplyr::group_by(neon_site_name, season, year) %>% 
+  dplyr::summarise(mean_gpp = mean(gpp, na.rm = TRUE)) %>% 
+ggplot(., aes(x = season, y = mean_gpp, fill = season)) +
+  geom_col(
+    width = 0.7
+    , alpha = 0.8
+  ) +
+  geom_text(
+    aes(label = scales::comma(mean_gpp, accuracy = 0.01))
+    , vjust = -0.3
+    , color = "black"
+  ) +
+  facet_wrap(~neon_site_name) +
+  scale_fill_viridis_d(option = "turbo", direction = -1) +
+  xlab("Season") + 
+  ylab(latex2exp::TeX("Mean 30-min $GPP \\; ( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-2})$")) +
+  labs(
+    title = "2020 Seasonal NEON GPP (30-min data)"
+    , subtitle = paste0(site)
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom"
+    , legend.direction = "horizontal"
+    , legend.title = element_blank()
+  ) +
+  guides(color = guide_legend(override.aes = list(size=5, alpha = 0.9)))
+
+```
+
+\textcolor{blue}{Based on 2020 data, The average 30-minute GPP for the NEON site `r site` is higher in the winter months (`r scales::comma(mean((dta_30min %>% dplyr::filter(neon_site_name == site & year == 2020 & season %in% c("Winter")))$gpp), accuracy = 0.01)`) than in the summer months (`r scales::comma(mean((dta_30min %>% dplyr::filter(neon_site_name == site & year == 2020 & season %in% c("Summer")))$gpp), accuracy = 0.01)`). This is opposite of the pattern for GPP seen at the CPER site. At the `r site`, this pattern is likely driven by low summer precipitation and high summer temperatures to the winter.}
+
+
 ## Question 2 
 
 Using the daily data. Select a single year of data for your site. Plot NEE, GPP, Re, soil temperature, air temperature, and soil water content against Day of Year.
+
+```{r}
+p_fn <- function(my_var, my_year) {
+  my_title <- paste0(toupper(my_var), " - ", as.character(my_year))
+  #plot
+  (
+    dta_1day %>% 
+    dplyr::filter(
+      year == my_year
+    ) %>% 
+    ggplot(., aes_string(x = "date_id", y = my_var, color = "neon_site_name")) +
+      geom_point() +
+      xlab("Date") + 
+      ylab(toupper(my_var)) +
+      labs(
+        title = my_title
+        # , subtitle = site
+      ) +
+      scale_fill_brewer(type = "qual", palette = "Dark2", direction = -1) +
+      theme_bw() +
+      theme(
+        legend.position = "top"
+        , legend.direction = "horizontal"
+        , legend.title = element_blank()
+      ) +
+      guides(color = guide_legend(override.aes = list(size=5, alpha = 0.9)))
+  )
+  
+}
+# vars
+v <- c("nee", "gpp", "re", "ts", "ta", "swc")
+for (i in 1:length(v)) {
+  print( p_fn(my_var = v[i], my_year = 2020) )
+}
+
+```
+
 
 ### a. 
 
