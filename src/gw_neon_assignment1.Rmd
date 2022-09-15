@@ -538,6 +538,17 @@ for (i in 1:length(v)) {
 Describe the annual patterns in each plot and what you think drives them.
 
 ```{r}
+# dta_1day %>% dplyr::filter(year == 2020 & doy %in% c(175:225) & neon_site_name != site) %>% nrow()
+dta_1day %>% 
+  dplyr::filter(
+    year == 2020
+    & neon_site_name == site
+  ) %>% 
+  ggplot() +
+    geom_point(aes(x = swc, y = gpp)) 
+    # facet_wrap(~neon_site_name)
+
+
 
 ```
 
@@ -674,3 +685,10 @@ ggplot(., aes(x = date_id)) +
   guides(color = guide_legend(override.aes = list(size = 5)))
 
 ```
+
+days 175:225 2020
+scatter plots of:
+GPP and RE (same y-axis)
+over all covariates with smoothed line
+
+then split out by season
