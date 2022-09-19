@@ -44,6 +44,7 @@ library(lubridate)
 library(viridis)
 library(scales)
 library(latex2exp)
+library(psych)
 remove(list=ls())
 ```
 
@@ -332,7 +333,7 @@ t <- c(
   "Soil Water Content (%)"
   , "Air temperature (\u00B0C)"
   , "Soil Temperature (\u00B0C)"
-  , latex2exp::TeX("$\\mu$mol photons $m^{-2} \\cdot s^{-1}$")
+  , latex2exp::TeX("PPFD ($\\mu$mol photons $m^{-2} \\cdot s^{-1}$)")
 )
 for (i in 1:length(v)) {
   print(
@@ -347,6 +348,50 @@ for (i in 1:length(v)) {
       , sites = c("Central Plains Experimental Range", "Santa Rita Experimental Range")
     )
   )
+}
+```
+
+## Covariate Relationships
+
+```{r, warning=FALSE, message=FALSE, fig.height=8, fig.width=8}
+my_corr_plot_fn <- function(my_site) {
+  (
+    psych::pairs.panels(
+        dta_1day %>% 
+        dplyr::filter(neon_site_name == my_site) %>% 
+        dplyr::select(
+          swc, ta, ts, ppfd_in
+          , vpd
+          , re
+          , gpp
+          , nee
+        )
+      , pch = "."  # 21 for color by group in line above # "." for no color
+      , labels = c(
+          "SWC"
+          , "Air Temp."
+          , "Soil Temp."
+          , "PPFD"
+          , "VPD"
+          , latex2exp::TeX("$R_E$")
+          , "GPP"
+          , "NEE"
+      )
+      , method = "pearson" # correlation method
+      , hist.col = "gray70"
+      , density = TRUE  # show density plots
+      , ellipses = FALSE # show correlation ellipses
+      , rug = FALSE
+      , main = my_site
+      , sub = "correlations for data matrix"
+    )
+  )  
+}
+
+# sites
+sts <- unique(dta_1day$neon_site_name)
+for (i in 1:length(sts)) {
+  my_corr_plot_fn(my_site = sts[i])
 }
 ```
 
