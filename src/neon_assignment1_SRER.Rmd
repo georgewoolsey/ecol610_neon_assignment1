@@ -479,7 +479,7 @@ ggplot(., aes(x = time_id)) +
   ) +
   scale_color_brewer(type = "qual", palette = "Dark2") +
   xlab("Day of Year") + 
-  ylab(latex2exp::TeX("$GPP \\; (\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot second^{-1})$")) +
+  ylab(latex2exp::TeX("GPP $(\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot$ second $^{-1})$")) +
   labs(
     title = "Winter Week Sample: Calculated GPP vs. NEON GPP"
     , subtitle = paste0(site, " (30-min data)")
@@ -510,7 +510,7 @@ ggplot(., aes(x = time_id)) +
   ) +
   scale_color_brewer(type = "qual", palette = "Dark2") +
   xlab("Day of Year") + 
-  ylab(latex2exp::TeX("$GPP \\; (\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot second^{-1})$")) +
+  ylab(latex2exp::TeX("GPP $(\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot$ second $^{-1})$")) +
   labs(
     title = "Summer Week Sample: Calculated GPP vs. NEON GPP"
     , subtitle = paste0(site, " (30-min data)")
@@ -561,7 +561,7 @@ ggplot(., aes(x = time_id, y = gpp, color = season)) +
   facet_wrap(~neon_site_name) +
   scale_color_viridis_d(option = "turbo", direction = -1) +
   xlab("Day of Year") + 
-  ylab(latex2exp::TeX("$GPP \\; (\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot second^{-1})$")) +
+  ylab(latex2exp::TeX("GPP $(\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot$ second $^{-1})$")) +
   labs(
     title = "2020 NEON GPP (30-min data)"
     , subtitle = paste0(site)
@@ -609,7 +609,7 @@ ggplot(., aes(x = season, y = mean_gpp, fill = season)) +
   facet_wrap(~neon_site_name) +
   scale_fill_viridis_d(option = "turbo", direction = -1) +
   xlab("Season") + 
-  ylab(latex2exp::TeX("Mean 30-min $GPP \\; (\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot second^{-1})$")) +
+  ylab(latex2exp::TeX("Mean 30-min GPP $(\\mu mol \\; CO_{2} \\cdot m^{-2} \\cdot$ second $^{-1})$")) +
   labs(
     title = "2020 Seasonal NEON GPP (30-min data)"
   ) +
