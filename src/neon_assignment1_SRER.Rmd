@@ -6,6 +6,7 @@ output:
   pdf_document:
     toc: true
     toc_depth: 2
+linkcolor: blue
 header-includes:
   - \usepackage{caption}
 editor_options: 
@@ -351,7 +352,7 @@ for (i in 1:length(v)) {
 }
 ```
 
-## Covariate Relationships
+## Scatter Plot Matrices (SPLOMS)
 
 ```{r, warning=FALSE, message=FALSE, fig.height=8, fig.width=8}
 my_corr_plot_fn <- function(my_site) {
@@ -382,8 +383,8 @@ my_corr_plot_fn <- function(my_site) {
       , density = TRUE  # show density plots
       , ellipses = FALSE # show correlation ellipses
       , rug = FALSE
+      , stars = TRUE
       , main = my_site
-      , sub = "correlations for data matrix"
     )
   )  
 }
@@ -658,8 +659,8 @@ p_fn <- function(my_var, my_year) {
 v <- c("nee", "gpp", "re", "ts", "ta", "swc")
 t <- c(
   latex2exp::TeX("NEE $( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-1})$")
-   , latex2exp::TeX("GEE $( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-1})$")
-   , latex2exp::TeX("$R_E$")
+   , latex2exp::TeX("GPP $( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-1})$")
+   , latex2exp::TeX("$R_E \\;( mol \\; CO_{2} \\cdot m^{-2} \\cdot day^{-1})$")
    , "Soil Temperature (\u00B0C)"
    , "Air temperature (\u00B0C)"
     , "Soil Water Content"
